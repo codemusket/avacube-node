@@ -1,11 +1,11 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import type { Petstore } from './index';
+import type { Avacube } from './index';
 
 export class APIResource {
-  protected _client: Petstore;
+  protected _client: Avacube;
 
-  constructor(client: Petstore) {
+  constructor(client: Avacube) {
     this._client = client;
   }
 }
