@@ -5,6 +5,7 @@ Types:
 - <code><a href="./src/resources/top-level.ts">CreateTaskResponse</a></code>
 - <code><a href="./src/resources/top-level.ts">GetKeyResponse</a></code>
 - <code><a href="./src/resources/top-level.ts">GetSmartAccountAddressResponse</a></code>
+- <code><a href="./src/resources/top-level.ts">ListTasksResponse</a></code>
 
 Methods:
 
@@ -13,6 +14,7 @@ Methods:
 - <code title="post /DeleteTask">client.<a href="./src/index.ts">deleteTask</a>({ ...params }) -> BoolValue</code>
 - <code title="post /GetKey">client.<a href="./src/index.ts">getKey</a>({ ...params }) -> GetKeyResponse</code>
 - <code title="post /GetSmartAccountAddress">client.<a href="./src/index.ts">getSmartAccountAddress</a>({ ...params }) -> GetSmartAccountAddressResponse</code>
+- <code title="get /ListTasks">client.<a href="./src/index.ts">listTasks</a>() -> ListTasksResponse</code>
 
 # Tasks
 

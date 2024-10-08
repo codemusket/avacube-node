@@ -198,6 +198,13 @@ export class Avacube extends Core.APIClient {
     return this.post('/GetSmartAccountAddress', { body, ...options });
   }
 
+  /**
+   * List Tasks
+   */
+  listTasks(options?: Core.RequestOptions): Core.APIPromise<TopLevelAPI.ListTasksResponse> {
+    return this.get('/ListTasks', options);
+  }
+
   protected override defaultQuery(): Core.DefaultQuery | undefined {
     return this._options.defaultQuery;
   }
@@ -259,6 +266,7 @@ export namespace Avacube {
   export import CreateTaskResponse = API.CreateTaskResponse;
   export import GetKeyResponse = API.GetKeyResponse;
   export import GetSmartAccountAddressResponse = API.GetSmartAccountAddressResponse;
+  export import ListTasksResponse = API.ListTasksResponse;
   export import CancelTaskParams = API.CancelTaskParams;
   export import CreateTaskParams = API.CreateTaskParams;
   export import DeleteTaskParams = API.DeleteTaskParams;

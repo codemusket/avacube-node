@@ -28,6 +28,24 @@ export interface GetSmartAccountAddressResponse {
   smart_account_address?: string;
 }
 
+export interface ListTasksResponse {
+  tasks?: Array<ListTasksResponse.Task>;
+}
+
+export namespace ListTasksResponse {
+  export interface Task {
+    /**
+     * The unique identifier of the task.
+     */
+    id?: string;
+
+    /**
+     * The current status of the task.
+     */
+    status?: 'Active' | 'Completed' | 'Failed' | 'Canceled';
+  }
+}
+
 export interface CancelTaskParams {
   /**
    * The unique identifier of the task.
@@ -160,6 +178,7 @@ export namespace TopLevel {
   export import CreateTaskResponse = TopLevelAPI.CreateTaskResponse;
   export import GetKeyResponse = TopLevelAPI.GetKeyResponse;
   export import GetSmartAccountAddressResponse = TopLevelAPI.GetSmartAccountAddressResponse;
+  export import ListTasksResponse = TopLevelAPI.ListTasksResponse;
   export import CancelTaskParams = TopLevelAPI.CancelTaskParams;
   export import CreateTaskParams = TopLevelAPI.CreateTaskParams;
   export import DeleteTaskParams = TopLevelAPI.DeleteTaskParams;

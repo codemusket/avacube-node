@@ -5,6 +5,7 @@ export {
   CreateTaskResponse,
   GetKeyResponse,
   GetSmartAccountAddressResponse,
+  ListTasksResponse,
   CancelTaskParams,
   CreateTaskParams,
   DeleteTaskParams,
