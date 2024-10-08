@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import Petstore from 'avacube';
+import Avacube from 'avacube';
 import { APIUserAbortError } from 'avacube';
 import { Headers } from 'avacube/core';
 import defaultFetch, { Response, type RequestInit, type RequestInfo } from 'node-fetch';
@@ -20,10 +20,10 @@ describe('instantiate client', () => {
   });
 
   describe('defaultHeaders', () => {
-    const client = new Petstore({
+    const client = new Avacube({
       baseURL: 'http://localhost:5000/',
       defaultHeaders: { 'X-My-Default-Header': '2' },
-      apiKey: 'My API Key',
+      authKey: 'My Auth Key',
     });
 
     test('they are used in the request', () => {
@@ -52,37 +52,37 @@ describe('instantiate client', () => {
 
   describe('defaultQuery', () => {
     test('with null query params given', () => {
-      const client = new Petstore({
+      const client = new Avacube({
         baseURL: 'http://localhost:5000/',
         defaultQuery: { apiVersion: 'foo' },
-        apiKey: 'My API Key',
+        authKey: 'My Auth Key',
       });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/foo?apiVersion=foo');
     });
 
     test('multiple default query params', () => {
-      const client = new Petstore({
+      const client = new Avacube({
         baseURL: 'http://localhost:5000/',
         defaultQuery: { apiVersion: 'foo', hello: 'world' },
-        apiKey: 'My API Key',
+        authKey: 'My Auth Key',
       });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/foo?apiVersion=foo&hello=world');
     });
 
     test('overriding with `undefined`', () => {
-      const client = new Petstore({
+      const client = new Avacube({
         baseURL: 'http://localhost:5000/',
         defaultQuery: { hello: 'world' },
-        apiKey: 'My API Key',
+        authKey: 'My Auth Key',
       });
       expect(client.buildURL('/foo', { hello: undefined })).toEqual('http://localhost:5000/foo');
     });
   });
 
   test('custom fetch', async () => {
-    const client = new Petstore({
+    const client = new Avacube({
       baseURL: 'http://localhost:5000/',
-      apiKey: 'My API Key',
+      authKey: 'My Auth Key',
       fetch: (url) => {
         return Promise.resolve(
           new Response(JSON.stringify({ url, custom: true }), {
@@ -97,9 +97,9 @@ describe('instantiate client', () => {
   });
 
   test('custom signal', async () => {
-    const client = new Petstore({
+    const client = new Avacube({
       baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
-      apiKey: 'My API Key',
+      authKey: 'My Auth Key',
       fetch: (...args) => {
         return new Promise((resolve, reject) =>
           setTimeout(
@@ -124,69 +124,82 @@ describe('instantiate client', () => {
 
   describe('baseUrl', () => {
     test('trailing slash', () => {
-      const client = new Petstore({ baseURL: 'http://localhost:5000/custom/path/', apiKey: 'My API Key' });
+      const client = new Avacube({ baseURL: 'http://localhost:5000/custom/path/', authKey: 'My Auth Key' });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/custom/path/foo');
     });
 
     test('no trailing slash', () => {
-      const client = new Petstore({ baseURL: 'http://localhost:5000/custom/path', apiKey: 'My API Key' });
+      const client = new Avacube({ baseURL: 'http://localhost:5000/custom/path', authKey: 'My Auth Key' });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/custom/path/foo');
     });
 
     afterEach(() => {
-      process.env['PETSTORE_BASE_URL'] = undefined;
+      process.env['AVACUBE_BASE_URL'] = undefined;
     });
 
     test('explicit option', () => {
-      const client = new Petstore({ baseURL: 'https://example.com', apiKey: 'My API Key' });
+      const client = new Avacube({ baseURL: 'https://example.com', authKey: 'My Auth Key' });
       expect(client.baseURL).toEqual('https://example.com');
     });
 
     test('env variable', () => {
-      process.env['PETSTORE_BASE_URL'] = 'https://example.com/from_env';
-      const client = new Petstore({ apiKey: 'My API Key' });
+      process.env['AVACUBE_BASE_URL'] = 'https://example.com/from_env';
+      const client = new Avacube({ authKey: 'My Auth Key' });
       expect(client.baseURL).toEqual('https://example.com/from_env');
     });
 
     test('empty env variable', () => {
-      process.env['PETSTORE_BASE_URL'] = ''; // empty
-      const client = new Petstore({ apiKey: 'My API Key' });
-      expect(client.baseURL).toEqual('https://petstore3.swagger.io/api/v3');
+      process.env['AVACUBE_BASE_URL'] = ''; // empty
+      const client = new Avacube({ authKey: 'My Auth Key' });
+      expect(client.baseURL).toEqual('grpc://aggregator.avaprotocol.org:2206');
     });
 
     test('blank env variable', () => {
-      process.env['PETSTORE_BASE_URL'] = '  '; // blank
-      const client = new Petstore({ apiKey: 'My API Key' });
-      expect(client.baseURL).toEqual('https://petstore3.swagger.io/api/v3');
+      process.env['AVACUBE_BASE_URL'] = '  '; // blank
+      const client = new Avacube({ authKey: 'My Auth Key' });
+      expect(client.baseURL).toEqual('grpc://aggregator.avaprotocol.org:2206');
+    });
+
+    test('env variable with environment', () => {
+      process.env['AVACUBE_BASE_URL'] = 'https://example.com/from_env';
+
+      expect(
+        () => new Avacube({ authKey: 'My Auth Key', environment: 'production' }),
+      ).toThrowErrorMatchingInlineSnapshot(
+        `"Ambiguous URL; The \`baseURL\` option (or AVACUBE_BASE_URL env var) and the \`environment\` option are given. If you want to use the environment you must pass baseURL: null"`,
+      );
+
+      const client = new Avacube({ authKey: 'My Auth Key', baseURL: null, environment: 'production' });
+      expect(client.baseURL).toEqual('grpc://aggregator.avaprotocol.org:2206');
     });
   });
 
   test('maxRetries option is correctly set', () => {
-    const client = new Petstore({ maxRetries: 4, apiKey: 'My API Key' });
+    const client = new Avacube({ maxRetries: 4, authKey: 'My Auth Key' });
     expect(client.maxRetries).toEqual(4);
 
     // default
-    const client2 = new Petstore({ apiKey: 'My API Key' });
+    const client2 = new Avacube({ authKey: 'My Auth Key' });
     expect(client2.maxRetries).toEqual(2);
   });
 
   test('with environment variable arguments', () => {
     // set options via env var
-    process.env['PETSTORE_API_KEY'] = 'My API Key';
-    const client = new Petstore();
-    expect(client.apiKey).toBe('My API Key');
+    process.env['AUTHKEY'] = 'My Auth Key';
+    const client = new Avacube();
+    expect(client.authKey).toBe('My Auth Key');
   });
 
   test('with overriden environment variable arguments', () => {
     // set options via env var
-    process.env['PETSTORE_API_KEY'] = 'another My API Key';
-    const client = new Petstore({ apiKey: 'My API Key' });
-    expect(client.apiKey).toBe('My API Key');
+    process.env['AUTHKEY'] = 'another My Auth Key';
+    const client = new Avacube({ authKey: 'My Auth Key' });
+    expect(client.authKey).toBe('My Auth Key');
   });
 });
 
 describe('request building', () => {
-  const client = new Petstore({ apiKey: 'My API Key' });
+  const client = new Avacube({ authKey: 'My Auth Key' });
 
   describe('Content-Length', () => {
     test('handles multi-byte characters', () => {
@@ -228,7 +241,7 @@ describe('retries', () => {
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
 
-    const client = new Petstore({ apiKey: 'My API Key', timeout: 10, fetch: testFetch });
+    const client = new Avacube({ authKey: 'My Auth Key', timeout: 10, fetch: testFetch });
 
     expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
     expect(count).toEqual(2);
@@ -258,7 +271,7 @@ describe('retries', () => {
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
 
-    const client = new Petstore({ apiKey: 'My API Key', fetch: testFetch, maxRetries: 4 });
+    const client = new Avacube({ authKey: 'My Auth Key', fetch: testFetch, maxRetries: 4 });
 
     expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
 
@@ -282,7 +295,7 @@ describe('retries', () => {
       capturedRequest = init;
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
-    const client = new Petstore({ apiKey: 'My API Key', fetch: testFetch, maxRetries: 4 });
+    const client = new Avacube({ authKey: 'My Auth Key', fetch: testFetch, maxRetries: 4 });
 
     expect(
       await client.request({
@@ -311,7 +324,7 @@ describe('retries', () => {
       capturedRequest = init;
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
-    const client = new Petstore({ apiKey: 'My API Key', fetch: testFetch, maxRetries: 4 });
+    const client = new Avacube({ authKey: 'My Auth Key', fetch: testFetch, maxRetries: 4 });
 
     expect(
       await client.request({
@@ -338,7 +351,7 @@ describe('retries', () => {
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
 
-    const client = new Petstore({ apiKey: 'My API Key', fetch: testFetch });
+    const client = new Avacube({ authKey: 'My Auth Key', fetch: testFetch });
 
     expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
     expect(count).toEqual(2);
@@ -365,7 +378,7 @@ describe('retries', () => {
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
 
-    const client = new Petstore({ apiKey: 'My API Key', fetch: testFetch });
+    const client = new Avacube({ authKey: 'My Auth Key', fetch: testFetch });
 
     expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
     expect(count).toEqual(2);

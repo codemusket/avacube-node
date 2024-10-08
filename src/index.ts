@@ -3,20 +3,38 @@
 import * as Errors from './error';
 import * as Uploads from './uploads';
 import { type Agent } from './_shims/index';
-import * as qs from './internal/qs';
 import * as Core from './core';
 import * as API from './resources/index';
+import * as TasksAPI from './resources/tasks';
+import * as TopLevelAPI from './resources/top-level';
+
+const environments = {
+  production: 'grpc://aggregator.avaprotocol.org:2206',
+  environment_1: 'grpc://aggregator-holesky.avaprotocol.org:2206',
+  environment_2: 'grpc://127.0.0.1:2206',
+};
+type Environment = keyof typeof environments;
 
 export interface ClientOptions {
   /**
-   * Defaults to process.env['PETSTORE_API_KEY'].
+   * API Key used for authentication
    */
-  apiKey?: string | undefined;
+  authKey?: string | undefined;
+
+  /**
+   * Specifies the environment to use for the API.
+   *
+   * Each environment maps to a different base URL:
+   * - `production` corresponds to `grpc://aggregator.avaprotocol.org:2206`
+   * - `environment_1` corresponds to `grpc://aggregator-holesky.avaprotocol.org:2206`
+   * - `environment_2` corresponds to `grpc://127.0.0.1:2206`
+   */
+  environment?: Environment;
 
   /**
    * Override the default base URL for the API, e.g., "https://api.example.com/v2/"
    *
-   * Defaults to process.env['PETSTORE_BASE_URL'].
+   * Defaults to process.env['AVACUBE_BASE_URL'].
    */
   baseURL?: string | null | undefined;
 
@@ -71,18 +89,19 @@ export interface ClientOptions {
 }
 
 /**
- * API Client for interfacing with the Petstore API.
+ * API Client for interfacing with the Avacube API.
  */
-export class Petstore extends Core.APIClient {
-  apiKey: string;
+export class Avacube extends Core.APIClient {
+  authKey: string;
 
   private _options: ClientOptions;
 
   /**
-   * API Client for interfacing with the Petstore API.
+   * API Client for interfacing with the Avacube API.
    *
-   * @param {string | undefined} [opts.apiKey=process.env['PETSTORE_API_KEY'] ?? undefined]
-   * @param {string} [opts.baseURL=process.env['PETSTORE_BASE_URL'] ?? https://petstore3.swagger.io/api/v3] - Override the default base URL for the API.
+   * @param {string | undefined} [opts.authKey=process.env['AUTHKEY'] ?? undefined]
+   * @param {Environment} [opts.environment=production] - Specifies the environment URL to use for the API.
+   * @param {string} [opts.baseURL=process.env['AVACUBE_BASE_URL'] ?? grpc://aggregator.avaprotocol.org:2206] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {number} [opts.httpAgent] - An HTTP agent used to manage HTTP(s) connections.
    * @param {Core.Fetch} [opts.fetch] - Specify a custom `fetch` function implementation.
@@ -91,24 +110,31 @@ export class Petstore extends Core.APIClient {
    * @param {Core.DefaultQuery} opts.defaultQuery - Default query parameters to include with every request to the API.
    */
   constructor({
-    baseURL = Core.readEnv('PETSTORE_BASE_URL'),
-    apiKey = Core.readEnv('PETSTORE_API_KEY'),
+    baseURL = Core.readEnv('AVACUBE_BASE_URL'),
+    authKey = Core.readEnv('AUTHKEY'),
     ...opts
   }: ClientOptions = {}) {
-    if (apiKey === undefined) {
-      throw new Errors.PetstoreError(
-        "The PETSTORE_API_KEY environment variable is missing or empty; either provide it, or instantiate the Petstore client with an apiKey option, like new Petstore({ apiKey: 'My API Key' }).",
+    if (authKey === undefined) {
+      throw new Errors.AvacubeError(
+        "The AUTHKEY environment variable is missing or empty; either provide it, or instantiate the Avacube client with an authKey option, like new Avacube({ authKey: 'My Auth Key' }).",
       );
     }
 
     const options: ClientOptions = {
-      apiKey,
+      authKey,
       ...opts,
-      baseURL: baseURL || `https://petstore3.swagger.io/api/v3`,
+      baseURL,
+      environment: opts.environment ?? 'production',
     };
 
+    if (baseURL && opts.environment) {
+      throw new Errors.AvacubeError(
+        'Ambiguous URL; The `baseURL` option (or AVACUBE_BASE_URL env var) and the `environment` option are given. If you want to use the environment you must pass baseURL: null',
+      );
+    }
+
     super({
-      baseURL: options.baseURL!,
+      baseURL: options.baseURL || environments[options.environment || 'production'],
       timeout: options.timeout ?? 60000 /* 1 minute */,
       httpAgent: options.httpAgent,
       maxRetries: options.maxRetries,
@@ -117,12 +143,60 @@ export class Petstore extends Core.APIClient {
 
     this._options = options;
 
-    this.apiKey = apiKey;
+    this.authKey = authKey;
   }
 
-  pets: API.Pets = new API.Pets(this);
-  store: API.Store = new API.Store(this);
-  user: API.UserResource = new API.UserResource(this);
+  tasks: API.Tasks = new API.Tasks(this);
+
+  /**
+   * Cancel a Task
+   */
+  cancelTask(
+    body: TopLevelAPI.CancelTaskParams,
+    options?: Core.RequestOptions,
+  ): Core.APIPromise<TasksAPI.BoolValue> {
+    return this.post('/CancelTask', { body, ...options });
+  }
+
+  /**
+   * Create a New Task
+   */
+  createTask(
+    body: TopLevelAPI.CreateTaskParams,
+    options?: Core.RequestOptions,
+  ): Core.APIPromise<TopLevelAPI.CreateTaskResponse> {
+    return this.post('/CreateTask', { body, ...options });
+  }
+
+  /**
+   * Delete a Task
+   */
+  deleteTask(
+    body: TopLevelAPI.DeleteTaskParams,
+    options?: Core.RequestOptions,
+  ): Core.APIPromise<TasksAPI.BoolValue> {
+    return this.post('/DeleteTask', { body, ...options });
+  }
+
+  /**
+   * Exchange for an Auth Token
+   */
+  getKey(
+    body: TopLevelAPI.GetKeyParams,
+    options?: Core.RequestOptions,
+  ): Core.APIPromise<TopLevelAPI.GetKeyResponse> {
+    return this.post('/GetKey', { body, ...options });
+  }
+
+  /**
+   * Retrieve Smart Account Address
+   */
+  getSmartAccountAddress(
+    body: TopLevelAPI.GetSmartAccountAddressParams,
+    options?: Core.RequestOptions,
+  ): Core.APIPromise<TopLevelAPI.GetSmartAccountAddressResponse> {
+    return this.post('/GetSmartAccountAddress', { body, ...options });
+  }
 
   protected override defaultQuery(): Core.DefaultQuery | undefined {
     return this._options.defaultQuery;
@@ -136,17 +210,13 @@ export class Petstore extends Core.APIClient {
   }
 
   protected override authHeaders(opts: Core.FinalRequestOptions): Core.Headers {
-    return { api_key: this.apiKey };
+    return { authkey: this.authKey };
   }
 
-  protected override stringifyQuery(query: Record<string, unknown>): string {
-    return qs.stringify(query, { arrayFormat: 'comma' });
-  }
-
-  static Petstore = this;
+  static Avacube = this;
   static DEFAULT_TIMEOUT = 60000; // 1 minute
 
-  static PetstoreError = Errors.PetstoreError;
+  static AvacubeError = Errors.AvacubeError;
   static APIError = Errors.APIError;
   static APIConnectionError = Errors.APIConnectionError;
   static APIConnectionTimeoutError = Errors.APIConnectionTimeoutError;
@@ -165,7 +235,7 @@ export class Petstore extends Core.APIClient {
 }
 
 export const {
-  PetstoreError,
+  AvacubeError,
   APIError,
   APIConnectionError,
   APIConnectionTimeoutError,
@@ -183,34 +253,21 @@ export const {
 export import toFile = Uploads.toFile;
 export import fileFromPath = Uploads.fileFromPath;
 
-export namespace Petstore {
+export namespace Avacube {
   export import RequestOptions = Core.RequestOptions;
 
-  export import Pets = API.Pets;
-  export import APIResponse = API.APIResponse;
-  export import Pet = API.Pet;
-  export import PetFindByStatusResponse = API.PetFindByStatusResponse;
-  export import PetFindByTagsResponse = API.PetFindByTagsResponse;
-  export import PetCreateParams = API.PetCreateParams;
-  export import PetUpdateParams = API.PetUpdateParams;
-  export import PetFindByStatusParams = API.PetFindByStatusParams;
-  export import PetFindByTagsParams = API.PetFindByTagsParams;
-  export import PetUpdateByIDParams = API.PetUpdateByIDParams;
-  export import PetUploadImageParams = API.PetUploadImageParams;
+  export import CreateTaskResponse = API.CreateTaskResponse;
+  export import GetKeyResponse = API.GetKeyResponse;
+  export import GetSmartAccountAddressResponse = API.GetSmartAccountAddressResponse;
+  export import CancelTaskParams = API.CancelTaskParams;
+  export import CreateTaskParams = API.CreateTaskParams;
+  export import DeleteTaskParams = API.DeleteTaskParams;
+  export import GetKeyParams = API.GetKeyParams;
+  export import GetSmartAccountAddressParams = API.GetSmartAccountAddressParams;
 
-  export import Store = API.Store;
-  export import StoreInventoryResponse = API.StoreInventoryResponse;
-  export import StoreCreateOrderParams = API.StoreCreateOrderParams;
-
-  export import UserResource = API.UserResource;
-  export import User = API.User;
-  export import UserLoginResponse = API.UserLoginResponse;
-  export import UserCreateParams = API.UserCreateParams;
-  export import UserUpdateParams = API.UserUpdateParams;
-  export import UserCreateWithListParams = API.UserCreateWithListParams;
-  export import UserLoginParams = API.UserLoginParams;
-
-  export import Order = API.Order;
+  export import Tasks = API.Tasks;
+  export import BoolValue = API.BoolValue;
+  export import TaskListResponse = API.TaskListResponse;
 }
 
-export default Petstore;
+export default Avacube;
