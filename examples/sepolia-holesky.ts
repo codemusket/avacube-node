@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import Avacube from 'avacube';
+import Avacube from '../src/index'
 
 interface Window {
     ethereum?: {
