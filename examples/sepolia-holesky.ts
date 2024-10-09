@@ -28,7 +28,7 @@ async function signMessage(message: string): Promise<string | null> {
         }
   
         // Prepare the message to be signed (should be UTF-8 encoded string)
-        const msgHex = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(message));
+        const msgHex = ethers.hexlify(ethers.toUtf8Bytes(message));
   
         // Ask MetaMask to sign the message
         const signature = await window.ethereum.request({
