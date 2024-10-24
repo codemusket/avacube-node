@@ -135,6 +135,16 @@ export namespace TaskCreateParams {
 
   export interface Schedule {
     /**
+     * A crontab expression representing when the task can be triggered.
+     */
+    cron?: string;
+
+    /**
+     * A list of epoch timestamps when the task can be triggered.
+     */
+    fixed?: Array<number>;
+
+    /**
      * The type of trigger condition.
      */
     trigger_type?: 'TimeCondition' | 'ContractQueryCondition' | 'ExpressionCondition';
@@ -142,12 +152,27 @@ export namespace TaskCreateParams {
 
   export interface ContractQuery {
     /**
+     * Encoded payload in hex format to send to the contract.
+     */
+    callmsg: string;
+
+    /**
+     * Target contract address in hex format.
+     */
+    contract_address: string;
+
+    /**
      * The type of trigger condition.
      */
     trigger_type?: 'TimeCondition' | 'ContractQueryCondition' | 'ExpressionCondition';
   }
 
   export interface Expression {
+    /**
+     * The raw expression to be evaluated.
+     */
+    expression?: string;
+
     /**
      * The type of trigger condition.
      */
