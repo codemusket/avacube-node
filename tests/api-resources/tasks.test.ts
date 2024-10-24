@@ -28,7 +28,7 @@ describe('resource tasks', () => {
     const response = await client.tasks.create({
       action: { amount: 'amount', destination: 'destination' },
       task_type: 'ETHTransferTask',
-      trigger: { trigger_type: 'TimeCondition' },
+      trigger: { cron: 'cron', fixed: [0, 0, 0], trigger_type: 'TimeCondition' },
       expired_at: 0,
       memo: 'memo',
       start_at: 0,
