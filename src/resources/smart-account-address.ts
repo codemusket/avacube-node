@@ -37,6 +37,6 @@ export interface SmartAccountAddressRetrieveParams {
 }
 
 export namespace SmartAccountAddress {
-  export import AddressResp = SmartAccountAddressAPI.AddressResp;
-  export import SmartAccountAddressRetrieveParams = SmartAccountAddressAPI.SmartAccountAddressRetrieveParams;
+  export type AddressResp = SmartAccountAddressAPI.AddressResp;
+  export type SmartAccountAddressRetrieveParams = SmartAccountAddressAPI.SmartAccountAddressRetrieveParams;
 }
