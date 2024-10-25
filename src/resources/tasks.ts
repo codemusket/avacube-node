@@ -195,10 +195,10 @@ export interface TaskCancelParams {
 }
 
 export namespace Tasks {
-  export type BoolValue = TasksAPI.BoolValue;
-  export type TaskCreateResponse = TasksAPI.TaskCreateResponse;
-  export type TaskListResponse = TasksAPI.TaskListResponse;
-  export type TaskCreateParams = TasksAPI.TaskCreateParams;
-  export type TaskDeleteParams = TasksAPI.TaskDeleteParams;
-  export type TaskCancelParams = TasksAPI.TaskCancelParams;
+  export import BoolValue = TasksAPI.BoolValue;
+  export import TaskCreateResponse = TasksAPI.TaskCreateResponse;
+  export import TaskListResponse = TasksAPI.TaskListResponse;
+  export import TaskCreateParams = TasksAPI.TaskCreateParams;
+  export import TaskDeleteParams = TasksAPI.TaskDeleteParams;
+  export import TaskCancelParams = TasksAPI.TaskCancelParams;
 }

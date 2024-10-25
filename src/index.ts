@@ -204,23 +204,23 @@ export import toFile = Uploads.toFile;
 export import fileFromPath = Uploads.fileFromPath;
 
 export namespace Avacube {
-  export type RequestOptions = Core.RequestOptions;
+  export import RequestOptions = Core.RequestOptions;
 
   export import SmartAccountAddress = API.SmartAccountAddress;
-  export type AddressResp = API.AddressResp;
-  export type SmartAccountAddressRetrieveParams = API.SmartAccountAddressRetrieveParams;
+  export import AddressResp = API.AddressResp;
+  export import SmartAccountAddressRetrieveParams = API.SmartAccountAddressRetrieveParams;
 
   export import Tasks = API.Tasks;
-  export type BoolValue = API.BoolValue;
-  export type TaskCreateResponse = API.TaskCreateResponse;
-  export type TaskListResponse = API.TaskListResponse;
-  export type TaskCreateParams = API.TaskCreateParams;
-  export type TaskDeleteParams = API.TaskDeleteParams;
-  export type TaskCancelParams = API.TaskCancelParams;
+  export import BoolValue = API.BoolValue;
+  export import TaskCreateResponse = API.TaskCreateResponse;
+  export import TaskListResponse = API.TaskListResponse;
+  export import TaskCreateParams = API.TaskCreateParams;
+  export import TaskDeleteParams = API.TaskDeleteParams;
+  export import TaskCancelParams = API.TaskCancelParams;
 
   export import Key = API.Key;
-  export type KeyRetrieveResponse = API.KeyRetrieveResponse;
-  export type KeyRetrieveParams = API.KeyRetrieveParams;
+  export import KeyRetrieveResponse = API.KeyRetrieveResponse;
+  export import KeyRetrieveParams = API.KeyRetrieveParams;
 }
 
 export default Avacube;

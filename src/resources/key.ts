@@ -38,6 +38,6 @@ export interface KeyRetrieveParams {
 }
 
 export namespace Key {
-  export type KeyRetrieveResponse = KeyAPI.KeyRetrieveResponse;
-  export type KeyRetrieveParams = KeyAPI.KeyRetrieveParams;
+  export import KeyRetrieveResponse = KeyAPI.KeyRetrieveResponse;
+  export import KeyRetrieveParams = KeyAPI.KeyRetrieveParams;
 }
