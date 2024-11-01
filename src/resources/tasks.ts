@@ -2,7 +2,6 @@
 
 import { APIResource } from '../resource';
 import * as Core from '../core';
-import * as TasksAPI from './tasks';
 
 export class Tasks extends APIResource {
   /**
@@ -194,11 +193,13 @@ export interface TaskCancelParams {
   id: string;
 }
 
-export namespace Tasks {
-  export import BoolValue = TasksAPI.BoolValue;
-  export import TaskCreateResponse = TasksAPI.TaskCreateResponse;
-  export import TaskListResponse = TasksAPI.TaskListResponse;
-  export import TaskCreateParams = TasksAPI.TaskCreateParams;
-  export import TaskDeleteParams = TasksAPI.TaskDeleteParams;
-  export import TaskCancelParams = TasksAPI.TaskCancelParams;
+export declare namespace Tasks {
+  export {
+    type BoolValue as BoolValue,
+    type TaskCreateResponse as TaskCreateResponse,
+    type TaskListResponse as TaskListResponse,
+    type TaskCreateParams as TaskCreateParams,
+    type TaskDeleteParams as TaskDeleteParams,
+    type TaskCancelParams as TaskCancelParams,
+  };
 }

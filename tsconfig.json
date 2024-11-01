@@ -11,7 +11,7 @@
     "paths": {
       "avacube/_shims/auto/*": ["src/_shims/auto/*-node"],
       "avacube/*": ["src/*"],
-      "avacube": ["src/index.ts"],
+      "avacube": ["src/index.ts"]
     },
     "noEmit": true,
 
