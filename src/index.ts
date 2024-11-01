@@ -1,10 +1,25 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import * as Errors from './error';
-import * as Uploads from './uploads';
 import { type Agent } from './_shims/index';
 import * as Core from './core';
+import * as Errors from './error';
+import * as Uploads from './uploads';
 import * as API from './resources/index';
+import { Key, KeyRetrieveParams, KeyRetrieveResponse } from './resources/key';
+import {
+  AddressResp,
+  SmartAccountAddress,
+  SmartAccountAddressRetrieveParams,
+} from './resources/smart-account-address';
+import {
+  BoolValue,
+  TaskCancelParams,
+  TaskCreateParams,
+  TaskCreateResponse,
+  TaskDeleteParams,
+  TaskListResponse,
+  Tasks,
+} from './resources/tasks';
 
 const environments = {
   production: 'grpc://aggregator.avaprotocol.org:2206',
@@ -184,43 +199,51 @@ export class Avacube extends Core.APIClient {
   static fileFromPath = Uploads.fileFromPath;
 }
 
-export const {
-  AvacubeError,
-  APIError,
-  APIConnectionError,
-  APIConnectionTimeoutError,
-  APIUserAbortError,
-  NotFoundError,
-  ConflictError,
-  RateLimitError,
-  BadRequestError,
-  AuthenticationError,
-  InternalServerError,
-  PermissionDeniedError,
-  UnprocessableEntityError,
-} = Errors;
+export const AvacubeError = Errors.AvacubeError;
+export const APIError = Errors.APIError;
+export const APIConnectionError = Errors.APIConnectionError;
+export const APIConnectionTimeoutError = Errors.APIConnectionTimeoutError;
+export const APIUserAbortError = Errors.APIUserAbortError;
+export const NotFoundError = Errors.NotFoundError;
+export const ConflictError = Errors.ConflictError;
+export const RateLimitError = Errors.RateLimitError;
+export const BadRequestError = Errors.BadRequestError;
+export const AuthenticationError = Errors.AuthenticationError;
+export const InternalServerError = Errors.InternalServerError;
+export const PermissionDeniedError = Errors.PermissionDeniedError;
+export const UnprocessableEntityError = Errors.UnprocessableEntityError;
 
 export import toFile = Uploads.toFile;
 export import fileFromPath = Uploads.fileFromPath;
 
-export namespace Avacube {
-  export import RequestOptions = Core.RequestOptions;
+Avacube.SmartAccountAddress = SmartAccountAddress;
+Avacube.Tasks = Tasks;
+Avacube.Key = Key;
 
-  export import SmartAccountAddress = API.SmartAccountAddress;
-  export import AddressResp = API.AddressResp;
-  export import SmartAccountAddressRetrieveParams = API.SmartAccountAddressRetrieveParams;
+export declare namespace Avacube {
+  export type RequestOptions = Core.RequestOptions;
 
-  export import Tasks = API.Tasks;
-  export import BoolValue = API.BoolValue;
-  export import TaskCreateResponse = API.TaskCreateResponse;
-  export import TaskListResponse = API.TaskListResponse;
-  export import TaskCreateParams = API.TaskCreateParams;
-  export import TaskDeleteParams = API.TaskDeleteParams;
-  export import TaskCancelParams = API.TaskCancelParams;
+  export {
+    SmartAccountAddress as SmartAccountAddress,
+    type AddressResp as AddressResp,
+    type SmartAccountAddressRetrieveParams as SmartAccountAddressRetrieveParams,
+  };
 
-  export import Key = API.Key;
-  export import KeyRetrieveResponse = API.KeyRetrieveResponse;
-  export import KeyRetrieveParams = API.KeyRetrieveParams;
+  export {
+    Tasks as Tasks,
+    type BoolValue as BoolValue,
+    type TaskCreateResponse as TaskCreateResponse,
+    type TaskListResponse as TaskListResponse,
+    type TaskCreateParams as TaskCreateParams,
+    type TaskDeleteParams as TaskDeleteParams,
+    type TaskCancelParams as TaskCancelParams,
+  };
+
+  export {
+    Key as Key,
+    type KeyRetrieveResponse as KeyRetrieveResponse,
+    type KeyRetrieveParams as KeyRetrieveParams,
+  };
 }
 
 export default Avacube;
