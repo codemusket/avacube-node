@@ -1,2 +1,4 @@
 configured_endpoints: 6
-openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/avacube%2Favacube-deae3a1d71e7354d9ae212100b4d1a10dcd1e05cd2067ab1cf0ebef00b016023.yml
+openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/avacube%2Favacube-c8a081a9e3e140d3db3b1b4429c3141aa144a617bbca1b77f46cb57dfa043bcf.yml
+openapi_spec_hash: 8c77f05b9e4f0b0cd3ed268aa225d326
+config_hash: 98538e9a621b504fa65c3bf63ffde81a

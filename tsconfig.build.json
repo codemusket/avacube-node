@@ -5,8 +5,8 @@
   "compilerOptions": {
     "rootDir": "./dist/src",
     "paths": {
-      "avacube/*": ["dist/src/*"],
-      "avacube": ["dist/src/index.ts"],
+      "avacube/*": ["./dist/src/*"],
+      "avacube": ["./dist/src/index.ts"],
     },
     "noEmit": false,
     "declaration": true,

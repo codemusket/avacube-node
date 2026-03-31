@@ -6,7 +6,7 @@ This library provides convenient access to the Avacube REST API from server-side
 
 The REST API documentation can be found on [docs.avacube.com](https://docs.avacube.com). The full API of this library can be found in [api.md](api.md).
 
-It is generated with [Stainless](https://www.stainlessapi.com/).
+It is generated with [Stainless](https://www.stainless.com/).
 
 ## Installation
 
@@ -27,13 +27,9 @@ const client = new Avacube({
   environment: 'environment_1', // or 'production' | 'environment_2'; defaults to 'production'
 });
 
-async function main() {
-  const addressResp = await client.smartAccountAddress.retrieve({ owner: 'owner' });
+const addressResp = await client.smartAccountAddress.retrieve({ owner: 'owner' });
 
-  console.log(addressResp.nonce);
-}
-
-main();
+console.log(addressResp.nonce);
 ```
 
 ### Request & Response types
@@ -49,12 +45,8 @@ const client = new Avacube({
   environment: 'environment_1', // or 'production' | 'environment_2'; defaults to 'production'
 });
 
-async function main() {
-  const params: Avacube.SmartAccountAddressRetrieveParams = { owner: 'owner' };
-  const addressResp: Avacube.AddressResp = await client.smartAccountAddress.retrieve(params);
-}
-
-main();
+const params: Avacube.SmartAccountAddressRetrieveParams = { owner: 'owner' };
+const addressResp: Avacube.AddressResp = await client.smartAccountAddress.retrieve(params);
 ```
 
 Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
@@ -67,8 +59,9 @@ a subclass of `APIError` will be thrown:
 
 <!-- prettier-ignore -->
 ```ts
-async function main() {
-  const addressResp = await client.smartAccountAddress.retrieve({ owner: 'owner' }).catch(async (err) => {
+const addressResp = await client.smartAccountAddress
+  .retrieve({ owner: 'owner' })
+  .catch(async (err) => {
     if (err instanceof Avacube.APIError) {
       console.log(err.status); // 400
       console.log(err.name); // BadRequestError
@@ -77,12 +70,9 @@ async function main() {
       throw err;
     }
   });
-}
-
-main();
 ```
 
-Error codes are as followed:
+Error codes are as follows:
 
 | Status Code | Error Type                 |
 | ----------- | -------------------------- |
@@ -274,7 +264,7 @@ await client.smartAccountAddress.retrieve(
 This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) conventions, though certain backwards-incompatible changes may be released as minor versions:
 
 1. Changes that only affect static types, without breaking runtime behavior.
-2. Changes to library internals which are technically public but not intended or documented for external use. _(Please open a GitHub issue to let us know if you are relying on such internals)_.
+2. Changes to library internals which are technically public but not intended or documented for external use. _(Please open a GitHub issue to let us know if you are relying on such internals.)_
 3. Changes that we do not expect to impact the vast majority of users in practice.
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
@@ -286,6 +276,15 @@ We are keen for your feedback; please open an [issue](https://www.github.com/cod
 TypeScript >= 4.5 is supported.
 
 The following runtimes are supported:
+
+- Web browsers (Up-to-date Chrome, Firefox, Safari, Edge, and more)
+- Node.js 18 LTS or later ([non-EOL](https://endoflife.date/nodejs)) versions.
+- Deno v1.28.0 or higher.
+- Bun 1.0 or later.
+- Cloudflare Workers.
+- Vercel Edge Runtime.
+- Jest 28 or greater with the `"node"` environment (`"jsdom"` is not supported at this time).
+- Nitro v2.6 or greater.
 
 Note that React Native is not supported at this time.
 
