@@ -10,7 +10,11 @@ const client = new Avacube({
 
 describe('resource key', () => {
   test('retrieve: only required params', async () => {
-    const responsePromise = client.key.retrieve({ expired_at: 0, owner: 'owner', signature: 'signature' });
+    const responsePromise = client.key.retrieve({
+      expired_at: 0,
+      owner: 'owner',
+      signature: 'signature',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -21,6 +25,10 @@ describe('resource key', () => {
   });
 
   test('retrieve: required and optional params', async () => {
-    const response = await client.key.retrieve({ expired_at: 0, owner: 'owner', signature: 'signature' });
+    const response = await client.key.retrieve({
+      expired_at: 0,
+      owner: 'owner',
+      signature: 'signature',
+    });
   });
 });
