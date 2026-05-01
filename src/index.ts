@@ -1,10 +1,25 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import * as Errors from './error';
-import * as Uploads from './uploads';
 import { type Agent } from './_shims/index';
 import * as Core from './core';
+import * as Errors from './error';
+import * as Uploads from './uploads';
 import * as API from './resources/index';
+import { Key, KeyRetrieveParams, KeyRetrieveResponse } from './resources/key';
+import {
+  AddressResp,
+  SmartAccountAddress,
+  SmartAccountAddressRetrieveParams,
+} from './resources/smart-account-address';
+import {
+  BoolValue,
+  TaskCancelParams,
+  TaskCreateParams,
+  TaskCreateResponse,
+  TaskDeleteParams,
+  TaskListResponse,
+  Tasks,
+} from './resources/tasks';
 
 const environments = {
   production: 'grpc://aggregator.avaprotocol.org:2206',
@@ -27,7 +42,7 @@ export interface ClientOptions {
    * - `environment_1` corresponds to `grpc://aggregator-holesky.avaprotocol.org:2206`
    * - `environment_2` corresponds to `grpc://127.0.0.1:2206`
    */
-  environment?: Environment;
+  environment?: Environment | undefined;
 
   /**
    * Override the default base URL for the API, e.g., "https://api.example.com/v2/"
@@ -42,8 +57,10 @@ export interface ClientOptions {
    *
    * Note that request timeouts are retried by default, so in a worst-case scenario you may wait
    * much longer than this timeout before the promise succeeds or fails.
+   *
+   * @unit milliseconds
    */
-  timeout?: number;
+  timeout?: number | undefined;
 
   /**
    * An HTTP agent used to manage HTTP(S) connections.
@@ -51,7 +68,7 @@ export interface ClientOptions {
    * If not provided, an agent will be constructed by default in the Node.js environment,
    * otherwise no agent is used.
    */
-  httpAgent?: Agent;
+  httpAgent?: Agent | undefined;
 
   /**
    * Specify a custom `fetch` function implementation.
@@ -67,7 +84,7 @@ export interface ClientOptions {
    *
    * @default 2
    */
-  maxRetries?: number;
+  maxRetries?: number | undefined;
 
   /**
    * Default headers to include with every request to the API.
@@ -75,7 +92,7 @@ export interface ClientOptions {
    * These can be removed in individual requests by explicitly setting the
    * header to `undefined` or `null` in request options.
    */
-  defaultHeaders?: Core.Headers;
+  defaultHeaders?: Core.Headers | undefined;
 
   /**
    * Default query parameters to include with every request to the API.
@@ -83,7 +100,7 @@ export interface ClientOptions {
    * These can be removed in individual requests by explicitly setting the
    * param to `undefined` in request options.
    */
-  defaultQuery?: Core.DefaultQuery;
+  defaultQuery?: Core.DefaultQuery | undefined;
 }
 
 /**
@@ -133,11 +150,24 @@ export class Avacube extends Core.APIClient {
 
     super({
       baseURL: options.baseURL || environments[options.environment || 'production'],
+      baseURLOverridden: baseURL ? baseURL !== environments[options.environment || 'production'] : false,
       timeout: options.timeout ?? 60000 /* 1 minute */,
       httpAgent: options.httpAgent,
       maxRetries: options.maxRetries,
       fetch: options.fetch,
     });
+
+    const customHeadersEnv = Core.readEnv('AVACUBE_CUSTOM_HEADERS');
+    if (customHeadersEnv) {
+      const parsed: Record<string, string> = {};
+      for (const line of customHeadersEnv.split('\n')) {
+        const colon = line.indexOf(':');
+        if (colon >= 0) {
+          parsed[line.substring(0, colon).trim()] = line.substring(colon + 1).trim();
+        }
+      }
+      options.defaultHeaders = { ...parsed, ...options.defaultHeaders };
+    }
 
     this._options = options;
 
@@ -147,6 +177,13 @@ export class Avacube extends Core.APIClient {
   smartAccountAddress: API.SmartAccountAddress = new API.SmartAccountAddress(this);
   tasks: API.Tasks = new API.Tasks(this);
   key: API.Key = new API.Key(this);
+
+  /**
+   * Check whether the base URL is set to its default.
+   */
+  #baseURLOverridden(): boolean {
+    return this.baseURL !== environments[this._options.environment || 'production'];
+  }
 
   protected override defaultQuery(): Core.DefaultQuery | undefined {
     return this._options.defaultQuery;
@@ -184,7 +221,38 @@ export class Avacube extends Core.APIClient {
   static fileFromPath = Uploads.fileFromPath;
 }
 
-export const {
+Avacube.SmartAccountAddress = SmartAccountAddress;
+Avacube.Tasks = Tasks;
+Avacube.Key = Key;
+
+export declare namespace Avacube {
+  export type RequestOptions = Core.RequestOptions;
+
+  export {
+    SmartAccountAddress as SmartAccountAddress,
+    type AddressResp as AddressResp,
+    type SmartAccountAddressRetrieveParams as SmartAccountAddressRetrieveParams,
+  };
+
+  export {
+    Tasks as Tasks,
+    type BoolValue as BoolValue,
+    type TaskCreateResponse as TaskCreateResponse,
+    type TaskListResponse as TaskListResponse,
+    type TaskCreateParams as TaskCreateParams,
+    type TaskDeleteParams as TaskDeleteParams,
+    type TaskCancelParams as TaskCancelParams,
+  };
+
+  export {
+    Key as Key,
+    type KeyRetrieveResponse as KeyRetrieveResponse,
+    type KeyRetrieveParams as KeyRetrieveParams,
+  };
+}
+
+export { toFile, fileFromPath } from './uploads';
+export {
   AvacubeError,
   APIError,
   APIConnectionError,
@@ -198,29 +266,6 @@ export const {
   InternalServerError,
   PermissionDeniedError,
   UnprocessableEntityError,
-} = Errors;
-
-export import toFile = Uploads.toFile;
-export import fileFromPath = Uploads.fileFromPath;
-
-export namespace Avacube {
-  export import RequestOptions = Core.RequestOptions;
-
-  export import SmartAccountAddress = API.SmartAccountAddress;
-  export import AddressResp = API.AddressResp;
-  export import SmartAccountAddressRetrieveParams = API.SmartAccountAddressRetrieveParams;
-
-  export import Tasks = API.Tasks;
-  export import BoolValue = API.BoolValue;
-  export import TaskCreateResponse = API.TaskCreateResponse;
-  export import TaskListResponse = API.TaskListResponse;
-  export import TaskCreateParams = API.TaskCreateParams;
-  export import TaskDeleteParams = API.TaskDeleteParams;
-  export import TaskCancelParams = API.TaskCancelParams;
-
-  export import Key = API.Key;
-  export import KeyRetrieveResponse = API.KeyRetrieveResponse;
-  export import KeyRetrieveParams = API.KeyRetrieveParams;
-}
+} from './error';
 
 export default Avacube;

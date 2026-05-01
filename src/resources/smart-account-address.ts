@@ -2,7 +2,6 @@
 
 import { APIResource } from '../resource';
 import * as Core from '../core';
-import * as SmartAccountAddressAPI from './smart-account-address';
 
 export class SmartAccountAddress extends APIResource {
   /**
@@ -36,7 +35,9 @@ export interface SmartAccountAddressRetrieveParams {
   owner: string;
 }
 
-export namespace SmartAccountAddress {
-  export import AddressResp = SmartAccountAddressAPI.AddressResp;
-  export import SmartAccountAddressRetrieveParams = SmartAccountAddressAPI.SmartAccountAddressRetrieveParams;
+export declare namespace SmartAccountAddress {
+  export {
+    type AddressResp as AddressResp,
+    type SmartAccountAddressRetrieveParams as SmartAccountAddressRetrieveParams,
+  };
 }

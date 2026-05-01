@@ -2,7 +2,6 @@
 
 import { APIResource } from '../resource';
 import * as Core from '../core';
-import * as KeyAPI from './key';
 
 export class Key extends APIResource {
   /**
@@ -37,7 +36,6 @@ export interface KeyRetrieveParams {
   signature: string;
 }
 
-export namespace Key {
-  export import KeyRetrieveResponse = KeyAPI.KeyRetrieveResponse;
-  export import KeyRetrieveParams = KeyAPI.KeyRetrieveParams;
+export declare namespace Key {
+  export { type KeyRetrieveResponse as KeyRetrieveResponse, type KeyRetrieveParams as KeyRetrieveParams };
 }
